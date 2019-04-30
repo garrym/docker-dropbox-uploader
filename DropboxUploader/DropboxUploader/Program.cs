@@ -9,8 +9,6 @@ namespace DropboxUploader
 {
     public class Program
     {
-        private static string AccessToken = "";
-
         public static async Task Main()
         {
             DropboxCertHelper.InitializeCertPinning();
@@ -18,7 +16,9 @@ namespace DropboxUploader
             var sourceFilePath = "Example.txt";
             var targetDirectory = "/DotNetApi/Help";
 
-            using (var client = GetClient())
+            var accessToken = GetAccessToken();
+
+            using (var client = GetClient(accessToken))
             {
                 await EnsureDirectoryExists(client, targetDirectory);
 
@@ -26,13 +26,19 @@ namespace DropboxUploader
             }
         }
 
-        private static DropboxClient GetClient()
+        private static string GetAccessToken()
+        {
+            // TODO: Pull this from Docker environment args rather than a file
+            return File.ReadAllText(@"C:\code\dropbox-access-token");
+        }
+
+        private static DropboxClient GetClient(string accessToken)
         {
             var httpClient = new HttpClient(new HttpClientHandler()) { Timeout = TimeSpan.FromMinutes(20) };
 
             var configuration = new DropboxClientConfig("BaseFourSecurityCamera") { HttpClient = httpClient };
 
-            return new DropboxClient(AccessToken, configuration);
+            return new DropboxClient(accessToken, configuration);
         }
 
         private static async Task EnsureDirectoryExists(DropboxClient client, string directory)
