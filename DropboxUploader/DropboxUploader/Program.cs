@@ -36,7 +36,7 @@ namespace DropboxUploader
         {
             var httpClient = new HttpClient(new HttpClientHandler()) { Timeout = TimeSpan.FromMinutes(20) };
 
-            var configuration = new DropboxClientConfig("BaseFourSecurityCamera") { HttpClient = httpClient };
+            var configuration = new DropboxClientConfig("DropboxUploader") { HttpClient = httpClient };
 
             return new DropboxClient(accessToken, configuration);
         }
